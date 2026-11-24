@@ -1,0 +1,56 @@
+# TiMOS-B-26.10.R1 both/x86_64 Nokia 7750 SR-1 Copyright (c) 2000-2026 Nokia.
+# All rights reserved. All use subject to applicable license agreements.
+# Built on Wed Oct 28 21:09:20 UTC 2026 by builder in /builds/2610B/R1/panos
+# Configuration format version 26.10 revision 0
+
+# Generated 2026-11-23T21:56:13.2Z by admin from 3fff:172:20:20::1
+# Commit ID 2
+#   Committed 2026-11-23T21:56:13.2Z by admin (MD-CLI) from 3fff:172:20:20::1
+
+    configure {
++       router "Base" {
++           interface "system" {
++               ipv4 {
++                   primary {
++                       address 10.222.255.2
++                       prefix-length 32
++                   }
++               }
++           }
++           interface "to-AS111" {
++               ipv4 {
++                   primary {
++                       address 192.0.2.1
++                       prefix-length 31
++                   }
++               }
++           }
++           interface "to-PE" {
++               ipv4 {
++                   primary {
++                       address 10.222.0.0
++                       prefix-length 31
++                   }
++               }
++           }
++           interface "to-RR" {
++               ipv4 {
++                   primary {
++                       address 10.222.0.2
++                       prefix-length 31
++                   }
++               }
++           }
++       }
+    }
+
+persistent-indices {
+    description "Persistent indices are maintained by the system and must not be modified."
+    vrtr-if-id {
+        router-name "Base" interface-name "to-AS111" vrtr-id 1 if-index 2
+        router-name "Base" interface-name "to-PE" vrtr-id 1 if-index 3
+        router-name "Base" interface-name "to-RR" vrtr-id 1 if-index 4
+    }
+}
+
+# Finished 2026-11-23T21:56:13.2Z

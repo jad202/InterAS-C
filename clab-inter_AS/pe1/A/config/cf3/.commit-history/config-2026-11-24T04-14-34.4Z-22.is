@@ -1,0 +1,239 @@
+# TiMOS-B-26.10.R1 both/x86_64 Nokia 7750 SR-1 Copyright (c) 2000-2026 Nokia.
+# All rights reserved. All use subject to applicable license agreements.
+# Built on Wed Oct 28 21:09:20 UTC 2026 by builder in /builds/2610B/R1/panos
+# Configuration format version 26.10 revision 0
+
+# Generated 2026-11-24T04:14:34.4Z by admin from 3fff:172:20:20::1
+# Commit ID 22
+#   Committed 2026-11-24T04:14:34.4Z by admin (MD-CLI) from 3fff:172:20:20::1
+
+    configure {
+-       policy-options {
+-           community "NoExport" {
+-               member "no-export" { }
+-           }
+-           policy-statement "RemNoExport" {
+-               default-action {
+-                   action-type accept
+-                   community {
+-                       remove ["NoExport"]
+-                   }
+-               }
+-           }
+-           policy-statement "label-vpn4-to-vpn-v6" {
+-               entry 10 {
+-                   from {
+-                       protocol {
+-                           name [bgp-label]
+-                       }
+-                   }
+-                   to {
+-                       protocol {
+-                           name [bgp-vpn]
+-                       }
+-                   }
+-                   action {
+-                       action-type accept
+-                   }
+-               }
+-           }
+-           policy-statement "lbl-to-ipv6" {
+-               entry 10 {
+-                   from {
+-                       protocol {
+-                           name [bgp-label]
+-                       }
+-                   }
+-               }
+-           }
+-           policy-statement "vpnv6-to-label-ipv4" {
+-               entry 10 {
+-                   from {
+-                       family [vpn-ipv6]
+-                   }
+-                   to {
+-                       protocol {
+-                           name [bgp-label]
+-                       }
+-                   }
+-                   action {
+-                       action-type accept
+-                   }
+-               }
+-           }
+-       }
+        port 1/1/c3/1 {
+-           ethernet {
+-               mode access
+-           }
+        }
+        router "Base" {
+-           autonomous-system 111
+            interface "to-ASBR" {
+-               port 1/1/c2/1
+            }
+            interface "to-RR" {
+-               port 1/1/c1/1
+            }
+-           bgp {
+-               admin-state enable
+-               split-horizon true
+-               next-hop-resolution {
+-                   use-bgp-routes true
+-               }
+-               rib-management {
+-                   ipv6 {
+-                       route-table-import {
+-                           policy-name "vpnv6-to-label-ipv4"
+-                       }
+-                   }
+-                   label-ipv4 {
+-                       route-table-import {
+-                           policy-name "label-vpn4-to-vpn-v6"
+-                       }
+-                   }
+-               }
+-               group "IBGP" {
+-                   vpn-apply-export true
+-                   vpn-apply-import true
+-                   peer-as 111
+-                   export {
+-                       policy ["RemNoExport"]
+-                   }
+-               }
+-               neighbor "10.111.255.2" {
+-                   group "IBGP"
+-                   family {
+-                       label-ipv4 true
+-                   }
+-               }
+-               neighbor "10.111.255.3" {
+-                   group "IBGP"
+-                   family {
+-                       vpn-ipv4 true
+-                       vpn-ipv6 true
+-                       mvpn-ipv4 true
+-                   }
+-               }
+-           }
+-           isis 0 {
+-               admin-state enable
+-               level-capability 2
+-               traffic-engineering true
+-               interface "system" {
+-                   admin-state enable
+-               }
+-               interface "to-ASBR" {
+-                   interface-type point-to-point
+-               }
+-               interface "to-RR" {
+-                   interface-type point-to-point
+-               }
+-               level 2 {
+-                   wide-metrics-only true
+-               }
+-           }
+-           ldp {
+-               interface-parameters {
+-                   interface "to-ASBR" {
+-                       ipv4 {
+-                           admin-state enable
+-                           fec-type-capability {
+-                               p2mp-ipv4 true
+-                           }
+-                       }
+-                   }
+-                   interface "to-RR" {
+-                       ipv4 {
+-                           admin-state enable
+-                       }
+-                   }
+-               }
+-           }
+        }
+-       service {
+-           vprn "100" {
+-               admin-state enable
+-               customer "1"
+-               autonomous-system 111
+-               igmp {
+-                   interface "to-CE1" {
+-                       version 3
+-                       ssm-translate {
+-                           group-range start 239.255.0.0 end 239.255.255.255 {
+-                               source 10.1.1.2 { }
+-                           }
+-                       }
+-                       static {
+-                           group 239.255.0.1 {
+-                               starg
+-                           }
+-                       }
+-                   }
+-               }
+-               pim {
+-               }
+-               mvpn {
+-                   c-mcast-signaling bgp
+-                   mdt-type receiver-only
+-                   auto-discovery {
+-                       type bgp
+-                   }
+-                   intersite-shared {
+-                       admin-state enable
+-                   }
+-                   vrf-target {
+-                       unicast true
+-                   }
+-                   provider-tunnel {
+-                       inclusive {
+-                           mldp {
+-                               admin-state enable
+-                           }
+-                       }
+-                   }
+-               }
+-               bgp-ipvpn {
+-                   mpls {
+-                       admin-state enable
+-                       route-distinguisher "10.111.255.1:111"
+-                       vrf-target {
+-                           community "target:64512:111"
+-                       }
+-                       auto-bind-tunnel {
+-                           resolution filter
+-                           resolution-filter {
+-                               ldp true
+-                           }
+-                       }
+-                   }
+-               }
+-               interface "to-CE1" {
+-                   ipv4 {
+-                       primary {
+-                           address 10.1.1.1
+-                           prefix-length 24
+-                       }
+-                   }
+-                   sap 1/1/c3/1 {
+-                       admin-state enable
+-                   }
+-                   ipv6 {
+-                       address 2001:db8::10:111:255:1 {
+-                           prefix-length 126
+-                       }
+-                   }
+-               }
+-           }
+-       }
+    }
+
+persistent-indices {
+    description "Persistent indices are maintained by the system and must not be modified."
+    vrtr-if-id {
+        router-name "Base" interface-name "to-ASBR" vrtr-id 1 if-index 2
+        router-name "Base" interface-name "to-RR" vrtr-id 1 if-index 3
+    }
+}
+
+# Finished 2026-11-24T04:14:34.4Z

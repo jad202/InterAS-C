@@ -1,0 +1,41 @@
+---
+CE1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.23
+CE2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.32
+asbr1:
+    username: admin
+    password: NokiaSros1!
+    platform: nokia_srsim
+    hostname: 172.20.20.33
+asbr2:
+    username: admin
+    password: NokiaSros1!
+    platform: nokia_srsim
+    hostname: 172.20.20.34
+pe1:
+    username: admin
+    password: NokiaSros1!
+    platform: nokia_srsim
+    hostname: 172.20.20.35
+pe2:
+    username: admin
+    password: NokiaSros1!
+    platform: nokia_srsim
+    hostname: 172.20.20.36
+rr1:
+    username: admin
+    password: NokiaSros1!
+    platform: nokia_srsim
+    hostname: 172.20.20.37
+rr2:
+    username: admin
+    password: NokiaSros1!
+    platform: nokia_srsim
+    hostname: 172.20.20.38

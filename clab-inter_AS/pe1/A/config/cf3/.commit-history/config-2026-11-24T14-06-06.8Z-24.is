@@ -1,0 +1,121 @@
+# TiMOS-B-26.10.R1 both/x86_64 Nokia 7750 SR-1 Copyright (c) 2000-2026 Nokia.
+# All rights reserved. All use subject to applicable license agreements.
+# Built on Wed Oct 28 21:09:20 UTC 2026 by builder in /builds/2610B/R1/panos
+# Configuration format version 26.10 revision 0
+
+# Generated 2026-11-24T14:06:06.8Z by admin from 3fff:172:20:20::1
+# Commit ID 24
+#   Committed 2026-11-24T14:06:06.8Z by admin (MD-CLI) from 3fff:172:20:20::1
+
+    configure {
++       policy-options {
++           policy-statement "label-vpn4-to-vpn-v6" {
++               entry 10 {
++                   from {
++                       protocol {
++                           name [bgp-label]
++                       }
++                   }
++                   to {
++                       protocol {
++                           name [bgp-vpn]
++                       }
++                   }
++                   action {
++                       action-type accept
++                   }
++               }
++           }
++           policy-statement "vpnv6-to-label-ipv4" {
++               entry 10 {
++                   from {
++                       family [vpn-ipv6]
++                   }
++                   to {
++                       protocol {
++                           name [bgp-label]
++                       }
++                   }
++                   action {
++                       action-type accept
++                   }
++               }
++           }
++       }
+        port 1/1/c3/1 {
++           ethernet {
++               mode access
++           }
+        }
+        router "Base" {
++           autonomous-system 111
++           bgp {
++               admin-state enable
++               split-horizon true
++               next-hop-resolution {
++                   use-bgp-routes true
++               }
++               group "IBGP" {
++                   peer-as 111
++               }
++               neighbor "10.111.255.2" {
++                   group "IBGP"
++                   family {
++                       label-ipv4 true
++                   }
++               }
++               neighbor "10.111.255.3" {
++                   group "IBGP"
++                   family {
++                       vpn-ipv6 true
++                   }
++               }
++           }
+        }
++       service {
++           vprn "100" {
++               admin-state enable
++               customer "1"
++               autonomous-system 111
++               bgp-ipvpn {
++                   mpls {
++                       admin-state enable
++                       route-distinguisher "10.111.255.1:111"
++                       vrf-target {
++                           community "target:64512:111"
++                       }
++                       auto-bind-tunnel {
++                           resolution filter
++                           resolution-filter {
++                               ldp true
++                           }
++                       }
++                   }
++               }
++               interface "to-CE1" {
++                   sap 1/1/c3/1 {
++                       admin-state enable
++                   }
++                   ipv6 {
++                       address 2001:db8::10:111:255:1 {
++                           prefix-length 126
++                       }
++                   }
++               }
++           }
++       }
+    }
+
+persistent-indices {
+    description "Persistent indices are maintained by the system and must not be modified."
+    vrtr-id {
+        router-name "100" vrtr-id 3
+    }
+    vrtr-if-id {
+        router-name "100" interface-name "to-CE1" vrtr-id 3 if-index 4
+        router-name "Base" interface-name "to-ASBR" vrtr-id 1 if-index 2
+        router-name "Base" interface-name "to-RR" vrtr-id 1 if-index 3
+    }
+}
+
+# Finished 2026-11-24T14:06:06.8Z

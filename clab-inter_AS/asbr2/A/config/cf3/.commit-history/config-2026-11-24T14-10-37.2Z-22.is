@@ -1,0 +1,77 @@
+# TiMOS-B-26.10.R1 both/x86_64 Nokia 7750 SR-1 Copyright (c) 2000-2026 Nokia.
+# All rights reserved. All use subject to applicable license agreements.
+# Built on Wed Oct 28 21:09:20 UTC 2026 by builder in /builds/2610B/R1/panos
+# Configuration format version 26.10 revision 0
+
+# Generated 2026-11-24T14:10:37.2Z by admin from 3fff:172:20:20::1
+# Commit ID 22
+#   Committed 2026-11-24T14:10:37.2Z by admin (MD-CLI) from 3fff:172:20:20::1
+
+    configure {
+        policy-options {
+-           policy-statement "pol-exp-PE-and-RR-pfxs" {
+-               entry 10 {
+-                   from {
+-                       prefix-list ["PE-fpx" "RR-pfx"]
+-                   }
+-                   action {
+-                       action-type accept
+-                   }
+-               }
+-           }
+-           policy-statement "pol-import-PE-and-RR-pfxs" {
+-               entry 20 {
+-                   from {
+-                       prefix-list ["RR-pfx"]
+-                   }
+-                   action {
+-                       action-type accept
+-                       advertise-label pop
+-                   }
+-               }
+-               entry 30 {
+-                   from {
+-                       prefix-list ["PE-fpx"]
+-                   }
+-                   action {
+-                       action-type accept
+-                   }
+-               }
+-           }
+        }
+        router "Base" {
+            bgp {
+                rib-management {
+                    label-ipv4 {
+-                       route-table-import {
+-                           policy-name "pol-import-PE-and-RR-pfxs"
+-                       }
+                    }
+                }
+                group "InterAS" {
++                   import {
++                       policy ["adv-label-ipv4"]
++                   }
++                   export {
++                       policy ["adv-label-ipv4"]
++                   }
+                }
+                neighbor "192.0.2.0" {
+-                   export {
+-                       policy ["pol-exp-PE-and-RR-pfxs"]
+-                   }
+                }
+            }
+        }
+    }
+
+persistent-indices {
+    description "Persistent indices are maintained by the system and must not be modified."
+    vrtr-if-id {
+        router-name "Base" interface-name "to-AS111" vrtr-id 1 if-index 2
+        router-name "Base" interface-name "to-PE" vrtr-id 1 if-index 3
+        router-name "Base" interface-name "to-RR" vrtr-id 1 if-index 4
+    }
+}
+
+# Finished 2026-11-24T14:10:37.2Z

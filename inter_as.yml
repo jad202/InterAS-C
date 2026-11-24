@@ -1,0 +1,39 @@
+name: inter_AS
+prefix: ""
+topology:
+  kinds:
+   nokia_srsim:
+     image: srsim2610
+     license: lic26.txt
+  nodes:
+   pe1:
+     kind: nokia_srsim
+   rr1:
+     kind: nokia_srsim
+   asbr1:
+     kind: nokia_srsim
+   pe2:
+     kind: nokia_srsim
+   rr2:
+     kind: nokia_srsim
+   asbr2:
+     kind: nokia_srsim
+   CE1:
+     kind: linux
+     image: nettool
+   CE2:
+     kind: linux
+     image: nettool
+  links:
+    - endpoints: ["pe1:1/1/c1/1", "rr1:1/1/c1/1"]
+    - endpoints: ["pe1:1/1/c2/1", "asbr1:1/1/c1/1"]
+    - endpoints: ["rr1:1/1/c2/1", "asbr1:1/1/c2/1"]
+
+    - endpoints: ["pe2:1/1/c2/1", "asbr2:1/1/c1/1"]
+    - endpoints: ["pe2:1/1/c1/1", "rr2:1/1/c1/1"]
+    - endpoints: ["asbr2:1/1/c2/1", "rr2:1/1/c2/1"]
+
+    - endpoints: ["asbr2:1/1/c3/1", "asbr1:1/1/c3/1"]
+
+    - endpoints: ["pe1:1/1/c3/1", "CE1:eth1"]
+    - endpoints: ["pe2:1/1/c3/1", "CE2:eth1"]
