@@ -1,0 +1,77 @@
+{
+  "freeTextAnnotations": [],
+  "freeShapeAnnotations": [],
+  "trafficRateAnnotations": [],
+  "scriptButtonAnnotations": [],
+  "groupStyleAnnotations": [],
+  "networkNodeAnnotations": [],
+  "nodeAnnotations": [
+    {
+      "id": "pe1",
+      "interfacePattern": "1/1/c{n}/1",
+      "position": {
+        "x": 180,
+        "y": 240
+      }
+    },
+    {
+      "id": "rr1",
+      "interfacePattern": "1/1/c{n}/1",
+      "position": {
+        "x": 280,
+        "y": 440
+      }
+    },
+    {
+      "id": "asbr1",
+      "interfacePattern": "1/1/c{n}/1",
+      "position": {
+        "x": 400,
+        "y": 240
+      }
+    },
+    {
+      "id": "pe2",
+      "interfacePattern": "1/1/c{n}/1",
+      "position": {
+        "x": 780,
+        "y": 240
+      }
+    },
+    {
+      "id": "rr2",
+      "interfacePattern": "1/1/c{n}/1",
+      "position": {
+        "x": 700,
+        "y": 440
+      }
+    },
+    {
+      "id": "asbr2",
+      "interfacePattern": "1/1/c{n}/1",
+      "position": {
+        "x": 640,
+        "y": 240
+      }
+    },
+    {
+      "id": "CE1",
+      "position": {
+        "x": 20,
+        "y": 240
+      }
+    },
+    {
+      "id": "CE2",
+      "position": {
+        "x": 920,
+        "y": 280
+      }
+    }
+  ],
+  "edgeAnnotations": [],
+  "aliasEndpointAnnotations": [],
+  "viewerSettings": {
+    "nodeStyle": "boxed"
+  }
+}

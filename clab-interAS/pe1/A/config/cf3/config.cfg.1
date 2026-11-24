@@ -3,10 +3,9 @@
 # Built on Wed Oct 28 21:09:20 UTC 2026 by builder in /builds/2610B/R1/panos
 # Configuration format version 26.10 revision 0
 
-# Generated 2026-11-24T14:46:12.2Z by admin from 3fff:172:20:20::1
-# Commit ID 1
-#   Committed 2026-11-24T14:46:11.0Z by system (MD-CLI) from Console
-#   Log       "System booted version B-26.10.R1."
+# Generated 2026-11-24T15:28:32.2Z by admin from 3fff:172:20:20::1
+# Commit ID 4
+#   Committed 2026-11-24T15:28:32.2Z by admin (MD-CLI) from 3fff:172:20:20::1
 
 configure {
     card 1 {
@@ -57,6 +56,160 @@ configure {
             }
         }
     }
+    policy-options {
+        prefix-list "sys" {
+            prefix 10.10.10.6/32 type exact {
+            }
+        }
+        policy-statement "exportlabel" {
+            entry 10 {
+                from {
+                    protocol {
+                        name [direct]
+                    }
+                }
+                to {
+                    protocol {
+                        name [bgp-label]
+                    }
+                }
+                action {
+                    action-type accept
+                }
+            }
+        }
+    }
+    port 1/1/c1 {
+        admin-state enable
+        connector {
+            breakout c1-100g
+        }
+    }
+    port 1/1/c1/1 {
+        admin-state enable
+    }
+    port 1/1/c2 {
+        admin-state enable
+        connector {
+            breakout c1-100g
+        }
+    }
+    port 1/1/c2/1 {
+        admin-state enable
+    }
+    router "Base" {
+        autonomous-system 64496
+        interface "system" {
+            ipv4 {
+                primary {
+                    address 10.111.255.1
+                    prefix-length 32
+                }
+            }
+        }
+        interface "toRR1" {
+            port 1/1/c1/1
+            ipv4 {
+                primary {
+                    address 10.111.0.2
+                    prefix-length 31
+                }
+            }
+        }
+        interface "toasbr1" {
+            port 1/1/c2/1
+            ipv4 {
+                primary {
+                    address 10.111.0.0
+                    prefix-length 31
+                }
+            }
+        }
+        bgp {
+            group "rrclient" {
+                type internal
+                family {
+                    vpn-ipv4 true
+                    vpn-ipv6 true
+                    label-ipv4 true
+                }
+                export {
+                    policy ["exportlabel"]
+                }
+            }
+            neighbor "10.10.10.11" {
+                group "rrclient"
+            }
+        }
+        isis 0 {
+            admin-state enable
+            level-capability 2
+            traffic-engineering true
+            interface "system" {
+                admin-state enable
+            }
+            interface "toRR1" {
+                interface-type point-to-point
+            }
+            interface "toasbr1" {
+                interface-type point-to-point
+            }
+            level 2 {
+                wide-metrics-only true
+            }
+        }
+        ldp {
+            interface-parameters {
+                interface "toRR1" {
+                    ipv4 {
+                        admin-state enable
+                    }
+                }
+                interface "toasbr1" {
+                    ipv4 {
+                        admin-state enable
+                    }
+                }
+            }
+        }
+    }
+    service {
+        vprn "100" {
+            admin-state enable
+            service-id 100
+            customer "1"
+            bgp-ipvpn {
+                mpls {
+                    admin-state enable
+                    route-distinguisher "10.10.10.6:100"
+                    vrf-target {
+                        community "target:64496:100"
+                    }
+                    auto-bind-tunnel {
+                        resolution filter
+                        resolution-filter {
+                            ldp true
+                        }
+                    }
+                }
+            }
+            interface "toCE1" {
+                admin-state enable
+                loopback true
+                ipv4 {
+                    primary {
+                        address 192.168.1.1
+                        prefix-length 24
+                    }
+                }
+                ipv6 {
+                    address 2001:db8::192:168:1:1 {
+                        prefix-length 64
+                    }
+                }
+            }
+        }
+    }
     system {
         name "pe1"
         grpc {
@@ -82,6 +235,10 @@ configure {
             }
         }
         management-interface {
+            configuration-save {
+                configuration-backups 5
+                incremental-saves false
+            }
             netconf {
                 auto-config-save true
                 listen {
@@ -99,6 +256,9 @@ configure {
             login-banner true
             pre-login-message {
                 message "................................................................\n:                  Welcome to Nokia SR OS!                     :\n:                                                              :\n:                                                              :\n: YANG:          https://yangbrowser.nokia.com/sros            :\n: Community:     https://containerlab.dev/community/           :\n: Discord:       https://containerlab.dev/discord/             :\n................................................................\n"
+            }
+            ssh {
+                inbound-max-sessions 30
             }
         }
         security {
@@ -359,10 +519,11 @@ configure {
                 }
                 local-user {
                     user "admin" {
-                        password "$2y$10$cdkqpdVq5kcOGHBGZeJls.nzPB.SDbnLm3wxxpHlbrzY8OhM7NW1q"
+                        password "$2y$10$TQrZlpBDra86.qoexZUzQeBXDY1FcdDhGWdD9lLxMuFyPVSm0OGy6"
                         restricted-to-home false
                         access {
                             console true
+                            ftp true
                             netconf true
                             grpc true
                         }
@@ -378,6 +539,14 @@ configure {
 
 persistent-indices {
     description "Persistent indices are maintained by the system and must not be modified."
+    vrtr-id {
+        router-name "100" vrtr-id 2
+    }
+    vrtr-if-id {
+        router-name "100" interface-name "toCE1" vrtr-id 2 if-index 4
+        router-name "Base" interface-name "toRR1" vrtr-id 1 if-index 2
+        router-name "Base" interface-name "toasbr1" vrtr-id 1 if-index 3
+    }
 }
 
-# Finished 2026-11-24T14:46:12.2Z
+# Finished 2026-11-24T15:28:32.2Z
